@@ -1,0 +1,11 @@
+Flask
+Flask-Login
+Flask-Bcrypt
+Flask-SQLAlchemy
+Flask-Limiter
+cryptography
+google-api-python-client
+google-auth
+google-auth-httplib2
+google-auth-oauthlib
+gunicorn

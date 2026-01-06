@@ -1,0 +1,13 @@
+{% for file in files %}
+<tr>
+<td>{{ file.name }}</td>
+<td>
+<form method="POST" action="/restore/{{ file.id }}">
+<button class="btn btn-success btn-sm">Restore</button>
+</form>
+<form method="POST" action="/permanent-delete/{{ file.id }}">
+<button class="btn btn-danger btn-sm">Delete Forever</button>
+</form>
+</td>
+</tr>
+{% endfor %}

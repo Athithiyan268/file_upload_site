@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+<nav class="navbar navbar-dark bg-dark">
+  <div class="container-fluid">
+    <span class="navbar-brand">👑 Admin Dashboard</span>
+    <a href="/" class="btn btn-light btn-sm">Back</a>
+    <a href="/admin/logs" class="btn btn-outline-light btn-sm">Logs</a>
+
+  </div>
+</nav>
+
+<!-- FLASH MESSAGES (FIXED) -->
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <div class="container mt-3">
+      {% for msg in messages %}
+        <div class="alert alert-success alert-dismissible fade show">
+          {{ msg }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<div class="container mt-4">
+
+<table class="table table-bordered table-hover align-middle">
+<thead>
+<tr>
+  <th>Email</th>
+  <th>Role</th>
+  <th>Storage Used</th>
+  <th>Status</th>
+  <th>Actions</th>
+</tr>
+</thead>
+
+<tbody>
+{% for u in users %}
+<tr>
+  <td>{{ u.email }}</td>
+  <td>{{ u.role }}</td>
+  <td>
+    {{ (u.used / 1024 / 1024)|round(2) }} MB /
+    {{ (u.quota / 1024 / 1024)|round(0) }} MB
+  </td>
+  <td>
+    {% if u.locked %}
+      <span class="badge bg-danger">Locked</span>
+    {% else %}
+      <span class="badge bg-success">Active</span>
+    {% endif %}
+  </td>
+  <td>
+    <form method="POST" action="/admin/toggle-lock/{{ u.id }}" class="d-inline">
+      <button class="btn btn-warning btn-sm">Lock / Unlock</button>
+    </form>
+
+    <form method="POST" action="/admin/toggle-role/{{ u.id }}" class="d-inline">
+      <button class="btn btn-info btn-sm">Toggle Role</button>
+    </form>
+  </td>
+</tr>
+{% endfor %}
+</tbody>
+
+</table>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
