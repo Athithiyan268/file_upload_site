@@ -8,6 +8,9 @@ from functools import wraps
 from models import db, User, File
 from models import ShareLink, AuditLog
 from datetime import datetime, timedelta
+from models import AuditLog
+from sqlalchemy import func
+
 import uuid
 
 import config
@@ -388,4 +391,56 @@ def shared_access(token):
 # ---------------- RUN ----------------
 if __name__ == "__main__":
     app.run(debug=True)
+
+
+
+
+# ---------------- ANALYTICS ----------------
+
+
+@app.route('/analytics')
+@login_required
+def analytics():
+    uploads = AuditLog.query.filter_by(
+        user_id=current_user.id,
+        action="UPLOAD"
+    ).count()
+
+    downloads = AuditLog.query.filter_by(
+        user_id=current_user.id,
+        action="DOWNLOAD"
+    ).count()
+
+    trash = AuditLog.query.filter_by(
+        user_id=current_user.id,
+        action="TRASH"
+    ).count()
+
+    return render_template(
+        "analytics.html",
+        uploads=uploads,
+        downloads=downloads,
+        trash=trash,
+        admin=False
+    )
+@app.route('/admin/analytics')
+@login_required
+@admin_required
+def admin_analytics():
+    uploads = AuditLog.query.filter_by(action="UPLOAD").count()
+    downloads = AuditLog.query.filter_by(action="DOWNLOAD").count()
+    trash = AuditLog.query.filter_by(action="TRASH").count()
+
+    total_users = User.query.count()
+    total_files = File.query.count()
+
+    return render_template(
+        "analytics.html",
+        uploads=uploads,
+        downloads=downloads,
+        trash=trash,
+        total_users=total_users,
+        total_files=total_files,
+        admin=True
+    )
 
